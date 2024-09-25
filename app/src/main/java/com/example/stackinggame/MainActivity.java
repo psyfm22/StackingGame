@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -22,12 +23,33 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout constraintLayout;
     private ImageView hotelMiddleIV;
     private float startingLocationX, endingLocationX, endingLocationY;
-    private int Ytime = 2000;
+    private final int yAxisTime = 2000;
+    private float centreOfMass, cumulativeWeight;
+    private final float weightOfBlock = 225, startOfGroundFloor = ;
+
+    //We divide number of pixels by 24
+
+    /**
+     * 960 is the center of pixel
+     * 660 is the start and
+     * 1260 is the end
+     *
+     * So if the center of mass falls within this then it will stay
+     *
+     * divide by 24
+     *
+     * 40 is the middle
+     * 27.5 is the start
+     * 52.5 is the end
+     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ImageView imageView = findViewById(R.id.imageView5);
+
 
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         hotelCountStackingActivity = sharedPreferences.getInt("hotelCountStackingActivity", 0);
@@ -44,18 +66,24 @@ public class MainActivity extends AppCompatActivity {
         Button addNewHotelLayerButton = findViewById(R.id.addFloorButton);
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
+        ImageView hotelFloorIV = findViewById(R.id.hotelFloorIV);
 
         addNewHotelLayerButton.setOnClickListener(view -> addNewImage());
 
         placeHotelLayerButton.setOnClickListener(view -> {
             if(animatorX!=null){
                 animatorX.pause();
+                Log.d("COMP3018", "Floor x "+ hotelFloorIV.getX());
+                Log.d("COMP3018", "Middle x "+ hotelMiddleIV.getX());
+                Log.d("COMP3018", "Here is anotherflkaj;dsjfa: "+imageView.getX());
+//                Floor x 660.0
+//                Middle x 774.1541
 
                 float extraMinus = hotelCountStackingActivity * boxHeightInPx;
                 endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
 
                 animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
-                animatorY.setDuration(Ytime/hotelCountStackingActivity);
+                animatorY.setDuration(yAxisTime /hotelCountStackingActivity);
                 animatorY.start();
             }
         });
@@ -108,5 +136,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationRepeat(@NonNull Animator animation) {}
         });
+    }
+
+
+    private void calculateNewWeightStack(){
+        cumulativeWeight += weightOfBlock;
+    }
+
+    private void calculateNewCenterOfMass(float offset){
+        centreOfMass = ((centreOfMass * cumulativeWeight) + (offset * weightOfBlock))/ (cumulativeWeight + weightOfBlock);
     }
 }
