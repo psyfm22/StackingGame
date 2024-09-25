@@ -38,7 +38,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/apartment_window" />
+        app:srcCompat="@drawable/apartment_window"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/button"
