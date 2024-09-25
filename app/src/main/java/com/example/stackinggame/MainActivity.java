@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 public class MainActivity extends AppCompatActivity {
+
     private ObjectAnimator animatorX;
     private ObjectAnimator animatorY;
     private int hotelCountStackingActivity;
@@ -38,15 +40,11 @@ public class MainActivity extends AppCompatActivity {
         endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - boxHeightInPx;
 
         constraintLayout = findViewById(R.id.main);
-        Button addNewHotelLayerButton = findViewById(R.id.button);
-        Button placeHotelLayerButton = findViewById(R.id.button2);
+        Button addNewHotelLayerButton = findViewById(R.id.addFloorButton);
+        Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
 
-
-
-        addNewHotelLayerButton.setOnClickListener(view -> {
-            addNewImage();
-        });
+        addNewHotelLayerButton.setOnClickListener(view -> addNewImage());
 
         placeHotelLayerButton.setOnClickListener(view -> {
             if(animatorX!=null){
@@ -91,10 +89,10 @@ public class MainActivity extends AppCompatActivity {
 
         animatorX.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {}
+            public void onAnimationStart(@NonNull Animator animation) {}
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(@NonNull Animator animation) {
                 float holder;
                 holder = startingLocationX;
                 startingLocationX = endingLocationX;
@@ -104,10 +102,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {}
+            public void onAnimationCancel(@NonNull Animator animation) {}
 
             @Override
-            public void onAnimationRepeat(Animator animation) {}
+            public void onAnimationRepeat(@NonNull Animator animation) {}
         });
     }
 }
