@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         placeHotelLayerButton.setOnClickListener(view -> {
             if(animatorX!=null){
                 animatorX.pause();
+
+                float extraMinus = hotelCountStackingActivity * boxHeightInPx;
+                endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
+
                 animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
                 animatorY.setDuration(3000);
                 animatorY.start();
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addNewImage(){
+        hotelCountStackingActivity++;
         hotelMiddleIV = new ImageView(this);
 
         hotelMiddleIV.setId(View.generateViewId());
