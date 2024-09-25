@@ -26,13 +26,16 @@ public class MainActivity extends AppCompatActivity {
         View movingBox = findViewById(R.id.movingBox);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button2);
+        Button button3 = findViewById(R.id.button3);
 
         float boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 174, getResources().getDisplayMetrics());
+        float boxHeightInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 174, getResources().getDisplayMetrics());
 
-        final float[] startingLocation = {0f};
-        final float[] endingLocation = {getResources().getDisplayMetrics().widthPixels - boxWidthInPx};
+        final float[] startingLocationX = {0f};
+        final float[] endingLocationX = {getResources().getDisplayMetrics().widthPixels - boxWidthInPx};
+        final float[] endingLocationY = {getResources().getDisplayMetrics().heightPixels - boxHeightInPx - boxWidthInPx};
 
-        animator = ObjectAnimator.ofFloat(movingBox, "translationX", startingLocation[0], endingLocation[0]);
+        animator = ObjectAnimator.ofFloat(movingBox, "translationX", startingLocationX[0], endingLocationX[0]);
         animator.setDuration(3000);
 
         button.setOnClickListener(view -> {
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(view -> {
             animator.pause();
             Log.d("COMP3018", ""+ movingBox.getX());
-            animator2 = ObjectAnimator.ofFloat(movingBox, "translationY", 0f, movingBox.getX());
+            animator2 = ObjectAnimator.ofFloat(movingBox, "translationY", 0f, endingLocationY[0]);
             animator2.setDuration(3000);
             animator2.start();
         });
@@ -54,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 float holder;
-                holder = startingLocation[0];
-                startingLocation[0] = endingLocation[0];
-                endingLocation[0] = holder;
-                animator.setFloatValues(startingLocation[0], endingLocation[0]);
+                holder = startingLocationX[0];
+                startingLocationX[0] = endingLocationX[0];
+                endingLocationX[0] = holder;
+                animator.setFloatValues(startingLocationX[0], endingLocationX[0]);
                 animator.start();
             }
 
