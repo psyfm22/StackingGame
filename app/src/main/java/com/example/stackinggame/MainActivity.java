@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout constraintLayout;
     private ImageView hotelMiddleIV;
     private float startingLocationX, endingLocationX, endingLocationY;
+    private int Ytime = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
 
                 animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
-                animatorY.setDuration(3000);
+                animatorY.setDuration(Ytime/hotelCountStackingActivity);
                 animatorY.start();
             }
         });
