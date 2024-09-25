@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
         View movingBox = findViewById(R.id.movingBox);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button2);
-        Button button3 = findViewById(R.id.button3);
 
         float boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 174, getResources().getDisplayMetrics());
         float boxHeightInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 174, getResources().getDisplayMetrics());
