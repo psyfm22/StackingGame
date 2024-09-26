@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
     List<ImageView> middleImageViews = new ArrayList<>();
     private float boxWidthInPx ,boxHeightInPx ,upperConstraint;
+    private TextView scoreTV;
 
 
     //We divide number of pixels by 24
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         Button addNewHotelLayerButton = findViewById(R.id.addFloorButton);
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
+        scoreTV = findViewById(R.id.scoreTV);
         
         //First rectangle
         /*
@@ -93,35 +95,28 @@ public class MainActivity extends AppCompatActivity {
             if(animatorX!=null){
                 animatorX.pause();
 
-                Log.d("COMP3018", "x of image is : "+hotelMiddleIV.getX());
-                Log.d("COMP3018", "y of image is : "+hotelMiddleIV.getY());
-
                 double leftX = hotelMiddleIV.getX();
                 double rightX = leftX + 600;
 
+                calculateNewCenterOfMass(hotelMiddleIV.getX(), hotelMiddleIV.getY());
+
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
                     showAlertDialogue(false);
-                }
-                lastBlockLeftX = leftX;
-                lastBlockRightX = rightX;
-
-
-                calculateNewCenterOfMass(hotelMiddleIV.getX(), hotelMiddleIV.getY());
-                Log.d("COMP3018", "Center of mass x: "+ centreOfMassPoint[0]);
-                Log.d("COMP3018", "Start of ground: "+ startOfGroundFloor);
-                Log.d("COMP3018", "end of ground: "+ endOfGroundFloor);
-
-                if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
+                } else if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     showAlertDialogue(false);
+                }else{
+                    lastBlockLeftX = leftX;
+                    lastBlockRightX = rightX;
+                    float extraMinus = hotelCountStackingActivity * boxHeightInPx;
+                    endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
+                    animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
+                    animatorY.setDuration(yAxisTime /hotelCountStackingActivity);
+                    animatorY.start();
+                    scoreTV.setText(""+hotelCountStackingActivity);
                 }
-
 
                 //Moves it to the right location
-                float extraMinus = hotelCountStackingActivity * boxHeightInPx;
-                endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
-                animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
-                animatorY.setDuration(yAxisTime /hotelCountStackingActivity);
-                animatorY.start();
+
             }
         });
     }
@@ -191,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
         numberBoxesSoFar++;
     }
 
-
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
      */
@@ -236,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetActivity(){
-
         for(int i=0 ; i<middleImageViews.size();i++){
             constraintLayout.removeView(middleImageViews.get(i));
         }
@@ -254,5 +247,7 @@ public class MainActivity extends AppCompatActivity {
         startingLocationX = 0f;
         endingLocationX = getResources().getDisplayMetrics().widthPixels - boxWidthInPx;
         endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - boxHeightInPx;
+
+        scoreTV.setText("0");
     }
 }
