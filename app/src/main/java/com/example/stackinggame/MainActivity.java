@@ -68,10 +68,9 @@ public class MainActivity extends AppCompatActivity {
         /*
         Center of gravity for first block is 960, 108, it just the central point
         The actual pixel would be (960,916)
-
-
          */
-        calculateNewCenterOfMass(0, weightOfBlock);
+        centreOfMassPoint[0] = 960;
+        centreOfMassPoint[1] = 916;
 
 
         addNewHotelLayerButton.setOnClickListener(view -> addNewImage());
