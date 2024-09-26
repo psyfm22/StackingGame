@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
         scoreTV = findViewById(R.id.scoreTV);
-        
+
+        placeHotelLayerButton.setEnabled(false);
         //First rectangle
         /*
         Center of gravity for first block is 960, 108, it just the central point
@@ -89,7 +90,11 @@ public class MainActivity extends AppCompatActivity {
         lastBlockRightX = 1260;
 
 
-        addNewHotelLayerButton.setOnClickListener(view -> addNewImage());
+        addNewHotelLayerButton.setOnClickListener(view -> {
+            addNewImage();
+            addNewHotelLayerButton.setEnabled(false);
+            placeHotelLayerButton.setEnabled(true);
+        });
 
         placeHotelLayerButton.setOnClickListener(view -> {
             if(animatorX!=null){
@@ -116,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //Moves it to the right location
+
+                addNewHotelLayerButton.setEnabled(true);
+                placeHotelLayerButton.setEnabled(false);
 
             }
         });
