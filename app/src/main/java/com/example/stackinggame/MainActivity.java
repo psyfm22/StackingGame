@@ -24,7 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView hotelMiddleIV;
     private float startingLocationX, endingLocationX, endingLocationY;
     private final int yAxisTime = 2000;
-    private double centreOfMass=0, cumulativeWeight=0;
+    private double numberBoxesSoFar=0;
+
+    private double[] centreOfMassPoint = new double[2];
     private final double weightOfBlock = 129600, startOfGroundFloor =660, endOfGroundFloor=1260;
 
     //We divide number of pixels by 24
@@ -63,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
         
         //First rectangle
+        /*
+        Center of gravity for first block is 960, 108, it just the central point
+        The actual pixel would be (960,916)
+
+
+         */
         calculateNewCenterOfMass(0, weightOfBlock);
 
 
@@ -73,22 +81,23 @@ public class MainActivity extends AppCompatActivity {
                 animatorX.pause();
 
 
-                double centerNewRect = hotelMiddleIV.getX() + 300;
-                double offset = centerNewRect - centreOfMass;
-                calculateNewCenterOfMass(offset, weightOfBlock);
-                Log.d("COMP3018", "Center of mass: "+ centreOfMass);
+                Log.d("COMP3018", "x of image is : "+hotelMiddleIV.getX());
+                Log.d("COMP3018", "y of image is : "+hotelMiddleIV.getY());
+
+                calculateNewCenterOfMass(hotelMiddleIV.getX(), hotelMiddleIV.getY());
+                Log.d("COMP3018", "Center of mass x: "+ centreOfMassPoint[0]);
                 Log.d("COMP3018", "Start of ground: "+ startOfGroundFloor);
                 Log.d("COMP3018", "end of ground: "+ endOfGroundFloor);
-                if (centreOfMass < startOfGroundFloor || centreOfMass > endOfGroundFloor) {
+                if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     Log.d("COMP3018", "The stack has toppled over!");
                 }else{
                     Log.d("COMP3018", "The stack is stable.");
                 }
 
 
-                    float extraMinus = hotelCountStackingActivity * boxHeightInPx;
+                //Moves it to the right location
+                float extraMinus = hotelCountStackingActivity * boxHeightInPx;
                 endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
-
                 animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
                 animatorY.setDuration(yAxisTime /hotelCountStackingActivity);
                 animatorY.start();
@@ -145,12 +154,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private double calculateNewWeight(double width, double height){
-        return height * width;
-    }
 
-    private void calculateNewCenterOfMass(double offset, double weight){
-        centreOfMass = ((centreOfMass * cumulativeWeight)+(offset*weight))/(cumulativeWeight + weight);
-        cumulativeWeight +=weight;
+    private void calculateNewCenterOfMass(double xInput, double yInput){
+        //Calculate centre of mass, each block weighs 1kg
+
+        double[] newCOM = new double[2];//x and y
+        newCOM[0] = xInput + 300;
+        newCOM[1] = yInput - 108;
+        //We do this as this works out the centre of the block
+
+        centreOfMassPoint[0] = ((numberBoxesSoFar * centreOfMassPoint[0]) + newCOM[0])/(numberBoxesSoFar+1);
+        centreOfMassPoint[1] = ((numberBoxesSoFar * centreOfMassPoint[1]) + newCOM[1])/(numberBoxesSoFar+1);
+
+        numberBoxesSoFar++;
     }
 }

@@ -8,7 +8,6 @@
     tools:context=".MainActivity">
 
 
-
     <ImageView
         android:id="@+id/grassBackgroundIV"
         android:layout_width="wrap_content"
@@ -36,12 +35,12 @@
         android:layout_width="600dp"
         android:layout_height="216dp"
         android:layout_marginTop="120dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/apartment_window"
-        android:visibility="gone"/>
+        app:srcCompat="@drawable/apartment_window" />
 
 
     <Button
@@ -67,5 +66,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.91"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
