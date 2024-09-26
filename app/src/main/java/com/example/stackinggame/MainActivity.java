@@ -24,23 +24,20 @@ public class MainActivity extends AppCompatActivity {
     private ImageView hotelMiddleIV;
     private float startingLocationX, endingLocationX, endingLocationY;
     private final int yAxisTime = 2000;
-    private float centreOfMass, cumulativeWeight;
-    private final float weightOfBlock = 225, startOfGroundFloor = ;
+    private double centreOfMass=0, cumulativeWeight=0;
+    private final double weightOfBlock = 129600, startOfGroundFloor =660, endOfGroundFloor=1260;
 
     //We divide number of pixels by 24
 
     /**
-     * 960 is the center of pixel
+     * Length is 600 and Height is 216
+     * Divided Length is 25 and Height is 9
+     *
+     * 960 is the center of start block
      * 660 is the start and
      * 1260 is the end
      *
      * So if the center of mass falls within this then it will stay
-     *
-     * divide by 24
-     *
-     * 40 is the middle
-     * 27.5 is the start
-     * 52.5 is the end
      */
 
 
@@ -48,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageView imageView = findViewById(R.id.imageView5);
-
 
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         hotelCountStackingActivity = sharedPreferences.getInt("hotelCountStackingActivity", 0);
@@ -66,20 +61,32 @@ public class MainActivity extends AppCompatActivity {
         Button addNewHotelLayerButton = findViewById(R.id.addFloorButton);
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
-        ImageView hotelFloorIV = findViewById(R.id.hotelFloorIV);
+        
+        //First rectangle
+        calculateNewCenterOfMass(0, weightOfBlock);
+
 
         addNewHotelLayerButton.setOnClickListener(view -> addNewImage());
 
         placeHotelLayerButton.setOnClickListener(view -> {
             if(animatorX!=null){
                 animatorX.pause();
-                Log.d("COMP3018", "Floor x "+ hotelFloorIV.getX());
-                Log.d("COMP3018", "Middle x "+ hotelMiddleIV.getX());
-                Log.d("COMP3018", "Here is anotherflkaj;dsjfa: "+imageView.getX());
-//                Floor x 660.0
-//                Middle x 774.1541
 
-                float extraMinus = hotelCountStackingActivity * boxHeightInPx;
+
+                double centerNewRect = hotelMiddleIV.getX() + 300;
+                double offset = centerNewRect - centreOfMass;
+                calculateNewCenterOfMass(offset, weightOfBlock);
+                Log.d("COMP3018", "Center of mass: "+ centreOfMass);
+                Log.d("COMP3018", "Start of ground: "+ startOfGroundFloor);
+                Log.d("COMP3018", "end of ground: "+ endOfGroundFloor);
+                if (centreOfMass < startOfGroundFloor || centreOfMass > endOfGroundFloor) {
+                    Log.d("COMP3018", "The stack has toppled over!");
+                }else{
+                    Log.d("COMP3018", "The stack is stable.");
+                }
+
+
+                    float extraMinus = hotelCountStackingActivity * boxHeightInPx;
                 endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
 
                 animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
@@ -138,12 +145,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    private void calculateNewWeightStack(){
-        cumulativeWeight += weightOfBlock;
+    private double calculateNewWeight(double width, double height){
+        return height * width;
     }
 
-    private void calculateNewCenterOfMass(float offset){
-        centreOfMass = ((centreOfMass * cumulativeWeight) + (offset * weightOfBlock))/ (cumulativeWeight + weightOfBlock);
+    private void calculateNewCenterOfMass(double offset, double weight){
+        centreOfMass = ((centreOfMass * cumulativeWeight)+(offset*weight))/(cumulativeWeight + weight);
+        cumulativeWeight +=weight;
     }
 }
