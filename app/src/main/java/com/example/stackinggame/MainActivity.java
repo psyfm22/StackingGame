@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private double lastBlockLeftX, lastBlockRightX;
     private AlertDialog alertDialog;
     List<ImageView> middleImageViews = new ArrayList<>();
-    float boxWidthInPx ,boxHeightInPx ,upperConstraint;
+    private float boxWidthInPx ,boxHeightInPx ,upperConstraint;
 
 
     //We divide number of pixels by 24
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
                     showAlertDialogue(false);
-                    resetActivity();
                 }
                 lastBlockLeftX = leftX;
                 lastBlockRightX = rightX;
@@ -114,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     showAlertDialogue(false);
-                    resetActivity();
                 }
 
 
@@ -226,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
         //Set the button dismiss
         alertButton.setOnClickListener(view1 -> {
             alertDialog.dismiss();
+            resetActivity();
         });
 
         if (alertDialog.getWindow() != null) {
@@ -241,11 +240,17 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0 ; i<middleImageViews.size();i++){
             constraintLayout.removeView(middleImageViews.get(i));
         }
+        middleImageViews.clear(); // Clear the list
+
+        hotelCountStackingActivity = 0;
+
         centreOfMassPoint[0] = 960;
         centreOfMassPoint[1] = 916;
         lastBlockLeftX = 660;
         lastBlockRightX = 1260;
+
         numberBoxesSoFar = 0;
+
         startingLocationX = 0f;
         endingLocationX = getResources().getDisplayMetrics().widthPixels - boxWidthInPx;
         endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - boxHeightInPx;
