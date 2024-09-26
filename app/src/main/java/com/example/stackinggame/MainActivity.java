@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private float startingLocationX, endingLocationX, endingLocationY;
     private final int yAxisTime = 2000;
     private double numberBoxesSoFar=0;
-
     private double[] centreOfMassPoint = new double[2];
-    private final double weightOfBlock = 129600, startOfGroundFloor =660, endOfGroundFloor=1260;
+    private final double startOfGroundFloor =660, endOfGroundFloor=1260;
+    private double lastBlockLeftX, lastBlockRightX;
 
     //We divide number of pixels by 24
 
@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
          */
         centreOfMassPoint[0] = 960;
         centreOfMassPoint[1] = 916;
+        lastBlockLeftX = 660;
+        lastBlockRightX = 1260;
 
 
         addNewHotelLayerButton.setOnClickListener(view -> addNewImage());
@@ -79,14 +81,24 @@ public class MainActivity extends AppCompatActivity {
             if(animatorX!=null){
                 animatorX.pause();
 
-
                 Log.d("COMP3018", "x of image is : "+hotelMiddleIV.getX());
                 Log.d("COMP3018", "y of image is : "+hotelMiddleIV.getY());
+
+                double leftX = hotelMiddleIV.getX();
+                double rightX = leftX + 600;
+
+                if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
+                    Log.d("COMP3018", "You didn't land on it");
+                }
+                lastBlockLeftX = leftX;
+                lastBlockRightX = rightX;
+
 
                 calculateNewCenterOfMass(hotelMiddleIV.getX(), hotelMiddleIV.getY());
                 Log.d("COMP3018", "Center of mass x: "+ centreOfMassPoint[0]);
                 Log.d("COMP3018", "Start of ground: "+ startOfGroundFloor);
                 Log.d("COMP3018", "end of ground: "+ endOfGroundFloor);
+
                 if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     Log.d("COMP3018", "The stack has toppled over!");
                 }else{
