@@ -20,6 +20,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private ObjectAnimator animatorX;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private final double startOfGroundFloor =660, endOfGroundFloor=1260;
     private double lastBlockLeftX, lastBlockRightX;
     private AlertDialog alertDialog;
+    List<ImageView> middleImageViews = new ArrayList<>();
+    float boxWidthInPx ,boxHeightInPx ,upperConstraint;
 
 
     //We divide number of pixels by 24
@@ -58,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         hotelCountStackingActivity = sharedPreferences.getInt("hotelCountStackingActivity", 0);
 
-        float boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics());
-        float boxHeightInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 216, getResources().getDisplayMetrics());
-        float upperConstraint = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 175, getResources().getDisplayMetrics());
+        boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics());
+        boxHeightInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 216, getResources().getDisplayMetrics());
+        upperConstraint = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 175, getResources().getDisplayMetrics());
 
         startingLocationX = 0f;
         endingLocationX = getResources().getDisplayMetrics().widthPixels - boxWidthInPx;
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
                     showAlertDialogue(false);
+                    resetActivity();
                 }
                 lastBlockLeftX = leftX;
                 lastBlockRightX = rightX;
@@ -108,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     showAlertDialogue(false);
+                    resetActivity();
                 }
 
 
@@ -135,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
         hotelMiddleIV.setLayoutParams(layoutParams);
         constraintLayout.addView(hotelMiddleIV);
+        middleImageViews.add(hotelCountStackingActivity-1, hotelMiddleIV);
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
@@ -226,5 +234,20 @@ public class MainActivity extends AppCompatActivity {
 
         //Show the actual alert
         alertDialog.show();
+    }
+
+    private void resetActivity(){
+
+        for(int i=0 ; i<middleImageViews.size();i++){
+            constraintLayout.removeView(middleImageViews.get(i));
+        }
+        centreOfMassPoint[0] = 960;
+        centreOfMassPoint[1] = 916;
+        lastBlockLeftX = 660;
+        lastBlockRightX = 1260;
+        numberBoxesSoFar = 0;
+        startingLocationX = 0f;
+        endingLocationX = getResources().getDisplayMetrics().widthPixels - boxWidthInPx;
+        endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - boxHeightInPx;
     }
 }
