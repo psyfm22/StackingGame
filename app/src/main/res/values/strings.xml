@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">StackingGame</string>
+
+
+    <string name="error_title_alert">Error</string>
+    <string name="success_title_alert">Success</string>
+    <string name="emotion_added_text_alert">Emotion Successfully Added</string>
+    <string name="emotion_already_added_text_alert">You have Already Added an Emotion</string>
+    <string name="okay_button_alert">Okay</string>
+    <string name="image_week_text_alert">Image of the Week Successfully Picked!</string>
+    <string name="song_added_text_alert">Song Recommendation Successfully Added!</string>
+    <string name="no_song_suggestions_alert">No Song Suggestions made this Week</string>
+    <string name="no_song_title_alert">Please Enter a Title of a Song</string>
+    <string name="film_added_text_alert">Film Recommendation Successfully Added!</string>
+    <string name="no_film_suggestions_alert">No Film Suggestions made this Week</string>
+    <string name="no_film_title_alert">Please Enter a Title of A Film</string>
+    <string name="more_charge_text_alert">Still Requires More Charge</string>
+    <string name="holder_string">Holder String</string>
+
+    <string name="game_over_title_alert">Game Over</string>
+    <string name="game_over_text_alert">Tower has Toppled!</string>
 </resources>

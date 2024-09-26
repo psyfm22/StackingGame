@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/alertLayout"
+    android:layout_width="1080dp"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutDialogueAlert"
+        android:layout_width="416dp"
+        android:layout_height="388dp"
+        android:background="@drawable/alert_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/alertTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp"
+            android:gravity="center_horizontal"
+            android:paddingTop="28dp"
+            android:text="@string/holder_string"
+            android:textColor="@color/black"
+            android:textSize="55sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@+id/layoutDialogueAlert"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <TextView
+            android:id="@+id/alertDescriptionTV"
+            android:layout_width="408dp"
+            android:layout_height="92dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:padding="8dp"
+            android:text="@string/holder_string"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/alertDoneButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alertTitleTV" />
+
+        <Button
+            android:id="@+id/alertDoneButton"
+            android:layout_width="183dp"
+            android:layout_height="88dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="40dp"
+            android:text="@string/okay_button_alert"
+            android:textSize="30sp"
+            app:cornerRadius="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alertDescriptionTV" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/alertLogoIV"
+        android:layout_width="199dp"
+        android:layout_height="172dp"
+        android:src="@drawable/success"
+        app:layout_constraintBottom_toTopOf="@+id/layoutDialogueAlert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/layoutDialogueAlert"
+        app:layout_constraintVertical_bias="0.597" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

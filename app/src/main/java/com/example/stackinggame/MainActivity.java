@@ -3,17 +3,22 @@ package com.example.stackinggame;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private double[] centreOfMassPoint = new double[2];
     private final double startOfGroundFloor =660, endOfGroundFloor=1260;
     private double lastBlockLeftX, lastBlockRightX;
+    private AlertDialog alertDialog;
+
 
     //We divide number of pixels by 24
 
@@ -88,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 double rightX = leftX + 600;
 
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
-                    Log.d("COMP3018", "You didn't land on it");
+                    showAlertDialogue(false);
                 }
                 lastBlockLeftX = leftX;
                 lastBlockRightX = rightX;
@@ -100,9 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("COMP3018", "end of ground: "+ endOfGroundFloor);
 
                 if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
-                    Log.d("COMP3018", "The stack has toppled over!");
-                }else{
-                    Log.d("COMP3018", "The stack is stable.");
+                    showAlertDialogue(false);
                 }
 
 
@@ -178,5 +183,48 @@ public class MainActivity extends AppCompatActivity {
         centreOfMassPoint[1] = ((numberBoxesSoFar * centreOfMassPoint[1]) + newCOM[1])/(numberBoxesSoFar+1);
 
         numberBoxesSoFar++;
+    }
+
+
+    /**
+     * showAlertDialogue, Shows the success of adding the alert dialogue
+     */
+    private void showAlertDialogue(boolean successful) {
+        //Initialise the layouts and views
+        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.alert_layout, null, false);
+        ConstraintLayout alertLayout = view.findViewById(R.id.alertLayout);
+        TextView alertTitle = view.findViewById(R.id.alertTitleTV);
+        TextView alertDescription = view.findViewById(R.id.alertDescriptionTV);
+        Button alertButton = view.findViewById(R.id.alertDoneButton);
+        ImageView alertLogo = view.findViewById(R.id.alertLogoIV);
+
+        if (successful) {
+            alertTitle.setText(R.string.success_title_alert);
+            alertDescription.setText(R.string.emotion_added_text_alert);
+            alertLogo.setImageResource(R.drawable.success);
+            alertButton.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
+        } else {
+            alertTitle.setText(R.string.game_over_title_alert);
+            alertDescription.setText(R.string.game_over_text_alert);
+            alertLogo.setImageResource(R.drawable.error);
+            alertButton.setBackgroundColor(ContextCompat.getColor(this, R.color.red_alert));
+        }
+
+        //Initialise the builder and the alertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setView(view);
+        alertDialog = builder.create();
+
+        //Set the button dismiss
+        alertButton.setOnClickListener(view1 -> {
+            alertDialog.dismiss();
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+
+        //Show the actual alert
+        alertDialog.show();
     }
 }
