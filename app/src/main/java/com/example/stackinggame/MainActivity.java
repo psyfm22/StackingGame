@@ -1,6 +1,7 @@
 package com.example.stackinggame;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView scoreTV;
     private ConstraintLayout constraintLayout;
     private ImageView hotelMiddleIV;
+    private ImageView hotelFloorIV;
 
 
     //We divide number of pixels by 24
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         Button addNewHotelLayerButton = findViewById(R.id.addFloorButton);
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
+        hotelFloorIV = findViewById(R.id.hotelFloorIV);
         scoreTV = findViewById(R.id.scoreTV);
 
         placeHotelLayerButton.setEnabled(false);
@@ -119,6 +122,23 @@ public class MainActivity extends AppCompatActivity {
                     animatorY.setDuration(yAxisTime /hotelCountStackingActivity);
                     animatorY.start();
                     scoreTV.setText(""+hotelCountStackingActivity);
+                }
+
+                if(numberBoxesSoFar == 3){
+                    //Here we need to scroll
+                    AnimatorSet animatorSet = new AnimatorSet();
+                    List<Animator> animators = new ArrayList<>();
+                    for(ImageView imageView : middleImageViews){
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "translationY", imageView.getTranslationY() + 1500);
+                        animator.setDuration(5000);
+                        animators.add(animator);
+                    }
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", hotelFloorIV.getTranslationY() + 1500);
+                    animator.setDuration(5000);
+                    animators.add(animator);
+
+                    animatorSet.playTogether(animators);
+                    animatorSet.start();
                 }
 
                 //Moves it to the right location
