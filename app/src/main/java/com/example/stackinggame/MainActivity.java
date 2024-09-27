@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         placeHotelLayerButton.setOnClickListener(view -> {
+            placeHotelLayerButton.setEnabled(false);
             if(animatorX!=null){
                 animatorX.pause();
 
@@ -130,6 +131,10 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(@NonNull Animator animator) {
+
+                        //Moves it to the right location
+                        addNewHotelLayerButton.setEnabled(true);
+                        placeHotelLayerButton.setEnabled(false);
                         if(numberBoxesSoFar == 3){
                             //Here we need to scroll
                             AnimatorSet animatorSet = new AnimatorSet();
@@ -147,17 +152,20 @@ public class MainActivity extends AppCompatActivity {
                             float heightForScroll =  hotelFloorIV.getY() - 108;
                             Log.d("COMP3018", "hotel Floor "+ hotelFloorIV.getY());
 
+                            float newEndingLocation = endingLocationY + (boxHeightInPx*3);
 
                             for(ImageView imageView : middleImageViews){
-                                ObjectAnimator animator1 = ObjectAnimator.ofFloat(imageView, "translationY", 0f, endingLocationY);
+                                ObjectAnimator animator1 = ObjectAnimator.ofFloat(imageView, "translationY", endingLocationY, newEndingLocation);
                                 animator1.setDuration(5000);
                                 animators.add(animator1);
 
+                                endingLocationY += boxHeightInPx;
+                                newEndingLocation += boxHeightInPx;
                                 Log.d("COMP3018","boc height: "+ boxHeightInPx);
                             }
 
 
-                            ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", endingLocationY);
+                            ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", newEndingLocation);
                             animator1.setDuration(5000);
                             animators.add(animator1);
 
@@ -173,9 +181,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onAnimationRepeat(@NonNull Animator animator) {}
                 });
 
-                //Moves it to the right location
-                addNewHotelLayerButton.setEnabled(true);
-                placeHotelLayerButton.setEnabled(false);
 
             }
         });
