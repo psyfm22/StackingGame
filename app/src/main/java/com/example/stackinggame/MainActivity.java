@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<ImageView> middleImageViews = new ArrayList<>();
     private TextView scoreTV;
     private ConstraintLayout constraintLayout;
-    private ImageView hotelMiddleIV, hotelFloorIV, backgroundIV;
+    private ImageView hotelMiddleIV, hotelFloorIV, grassBackgroundIV, skyBackgroundIV;
     private boolean doingFirstPass = true;
     /**
      * Length is 600 and Height is 216
@@ -72,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
         hotelFloorIV = findViewById(R.id.hotelFloorIV);
-        backgroundIV = findViewById(R.id.grassBackgroundIV);
         scoreTV = findViewById(R.id.scoreTV);
+
+        grassBackgroundIV = findViewById(R.id.grassBackgroundIV);
+        skyBackgroundIV = findViewById(R.id.skyBackgroundIV);
 
         placeHotelLayerButton.setEnabled(false);
         //First rectangle
@@ -135,97 +137,70 @@ public class MainActivity extends AppCompatActivity {
                             AnimatorSet animatorSet = new AnimatorSet();
                             List<Animator> animators = new ArrayList<>();
 
+                            float newEndingLocation = endingLocationY + (boxHeightInPx*6);
+
                             if(doingFirstPass){
                                 doingFirstPass = false;
-                                float newEndingLocation = endingLocationY + (boxHeightInPx*6);
+
                                 float holder = (float) (boxHeightInPx*3.2);
                                 ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", newEndingLocation-holder);
                                 animator1.setDuration(5000);
                                 animators.add(animator1);
                                 newEndingLocation -= boxHeightInPx;
-
-                                for(ImageView imageView : middleImageViews){
-                                    Log.d("COMP3018","This is the location of them "+ imageView.getY());
-                                    Log.d("COMP3018","Freddie checking new ending location "+ newEndingLocation);
-                                    //We go from the first image at the bottom
-                                    animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
-                                    animator1.setDuration(5000);
-                                    animators.add(animator1);
-
-                                    newEndingLocation -= boxHeightInPx;
-                                }
-
-                                animatorSet.playTogether(animators);
-                                animatorSet.start();
-                                animatorSet.addListener(new Animator.AnimatorListener() {
-                                    @Override
-                                    public void onAnimationStart(@NonNull Animator animator) {}
-
-                                    @Override
-                                    public void onAnimationEnd(@NonNull Animator animator) {
-                                        Log.d("COMP3018","Animation set ended");
-
-                                        ImageView lastElement = middleImageViews.get(middleImageViews.size() - 1);
-
-                                        int numberOfIVs = middleImageViews.size();
-                                        for(int i=0 ; i<numberOfIVs;i++){
-                                            if(i!=numberOfIVs-1){
-                                                constraintLayout.removeView(middleImageViews.get(i));
-                                            }
-                                        }
-                                        middleImageViews.clear();
-                                        middleImageViews.add(0, lastElement);
-                                    }
-
-                                    @Override
-                                    public void onAnimationCancel(@NonNull Animator animator) {}
-
-                                    @Override
-                                    public void onAnimationRepeat(@NonNull Animator animator) {}
-                                });
-
-                            }else{
-                                float newEndingLocation = endingLocationY + (boxHeightInPx*6);
-                                ObjectAnimator animator1;
-                                for(ImageView imageView : middleImageViews){
-                                    Log.d("COMP3018","This is the location of them "+ imageView.getY());
-                                    Log.d("COMP3018","Freddie checking new ending location "+ newEndingLocation);
-                                    //We go from the first image at the bottom
-                                    animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
-                                    animator1.setDuration(5000);
-                                    animators.add(animator1);
-
-                                    newEndingLocation -= boxHeightInPx;
-                                }
-                                animatorSet.playTogether(animators);
-                                animatorSet.start();
-                                animatorSet.addListener(new Animator.AnimatorListener() {
-                                    @Override
-                                    public void onAnimationStart(@NonNull Animator animator) {}
-
-                                    @Override
-                                    public void onAnimationEnd(@NonNull Animator animator) {
-                                        Log.d("COMP3018","Animation set ended");
-
-                                        ImageView lastElement = middleImageViews.get(middleImageViews.size() - 1);
-
-                                        int numberOfIVs = middleImageViews.size();
-                                        for(int i=0 ; i<numberOfIVs;i++){
-                                            if(i!=numberOfIVs-1){
-                                                constraintLayout.removeView(middleImageViews.get(i));
-                                            }
-                                        }
-                                        middleImageViews.clear();
-                                        middleImageViews.add(lastElement);
-                                    }
-
-                                    @Override
-                                    public void onAnimationCancel(@NonNull Animator animator) {}
-
-                                    @Override
-                                    public void onAnimationRepeat(@NonNull Animator animator) {}
-                                });
                             }
+
+                            ObjectAnimator animator1;
+                            for(ImageView imageView : middleImageViews){
+                                Log.d("COMP3018","This is the location of them "+ imageView.getY());
+                                Log.d("COMP3018","Freddie checking new ending location "+ newEndingLocation);
+                                //We go from the first image at the bottom
+                                animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
+                                animator1.setDuration(5000);
+                                animators.add(animator1);
+
+                                newEndingLocation -= boxHeightInPx;
+                            }
+
+                            ObjectAnimator slideDownSkyBackground = ObjectAnimator.ofFloat(skyBackgroundIV, "translationY", -1080f, 0f);
+                            slideDownSkyBackground.setDuration(5000);
+                            animators.add(slideDownSkyBackground);
+                            ObjectAnimator slideDownGrassBackground = ObjectAnimator.ofFloat(grassBackgroundIV, "translationY", 0f, 1080f);
+                            slideDownGrassBackground.setDuration(5000);
+                            animators.add(slideDownGrassBackground);
+
+                            animatorSet.playTogether(animators);
+                            animatorSet.start();
+
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(@NonNull Animator animator) {}
+
+                                @Override
+                                public void onAnimationEnd(@NonNull Animator animator) {
+
+                                    ImageView lastElement = middleImageViews.get(middleImageViews.size() - 1);
+
+                                    int numberOfIVs = middleImageViews.size();
+                                    for(int i=0 ; i<numberOfIVs;i++){
+                                        if(i!=numberOfIVs-1){
+                                            constraintLayout.removeView(middleImageViews.get(i));
+                                        }
+                                    }
+                                    middleImageViews.clear();
+                                    middleImageViews.add(0, lastElement);
+                                    if(doingFirstPass){
+                                        constraintLayout.removeView(hotelFloorIV);
+                                    }
+                                }
+
+                                @Override
+                                public void onAnimationCancel(@NonNull Animator animator) {}
+
+                                @Override
+                                public void onAnimationRepeat(@NonNull Animator animator) {}
+                            });
+
+
                             currentNumberOfBoxes =0;
                         }
                     }
@@ -236,8 +211,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationRepeat(@NonNull Animator animator) {}
                 });
-
-
             }
         });
     }
