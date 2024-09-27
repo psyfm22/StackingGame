@@ -31,7 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        android:translationY="-1000dp"
+        android:translationY="-1080dp"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/sky_background" />
 
