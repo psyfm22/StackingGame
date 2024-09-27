@@ -106,8 +106,10 @@ public class MainActivity extends AppCompatActivity {
 
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
                     showAlertDialogue(false);
+                    resetActivity();
                 } else if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     showAlertDialogue(false);
+                    resetActivity();
                 }else{
                     lastBlockLeftX = leftX;
                     lastBlockRightX = rightX;
@@ -225,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
         //Set the button dismiss
         alertButton.setOnClickListener(view1 -> {
             alertDialog.dismiss();
-            resetActivity();
         });
 
         if (alertDialog.getWindow() != null) {
