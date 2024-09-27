@@ -171,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                             animatorSet.playTogether(animators);
                             animatorSet.start();
 
+
+
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(@NonNull Animator animator) {}
@@ -190,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                                     middleImageViews.add(0, lastElement);
                                     if(doingFirstPass){
                                         constraintLayout.removeView(hotelFloorIV);
+                                        grassBackgroundIV.setImageResource(R.drawable.sky_background);
                                     }
                                 }
 
