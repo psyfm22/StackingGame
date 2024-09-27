@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<ImageView> middleImageViews = new ArrayList<>();
     private TextView scoreTV;
     private ConstraintLayout constraintLayout;
-    private ImageView hotelMiddleIV;
-    private ImageView hotelFloorIV;
+    private ImageView hotelMiddleIV, hotelFloorIV, backgroundIV;
 
 
     //We divide number of pixels by 24
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         Button placeHotelLayerButton = findViewById(R.id.stopFloorButton);
         hotelMiddleIV = findViewById(R.id.hotelMiddleIV);
         hotelFloorIV = findViewById(R.id.hotelFloorIV);
+        backgroundIV = findViewById(R.id.grassBackgroundIV);
         scoreTV = findViewById(R.id.scoreTV);
 
         placeHotelLayerButton.setEnabled(false);
@@ -124,25 +124,56 @@ public class MainActivity extends AppCompatActivity {
                     scoreTV.setText(""+hotelCountStackingActivity);
                 }
 
-                if(numberBoxesSoFar == 3){
-                    //Here we need to scroll
-                    AnimatorSet animatorSet = new AnimatorSet();
-                    List<Animator> animators = new ArrayList<>();
-                    for(ImageView imageView : middleImageViews){
-                        ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "translationY", imageView.getTranslationY() + 1500);
-                        animator.setDuration(5000);
-                        animators.add(animator);
-                    }
-                    ObjectAnimator animator = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", hotelFloorIV.getTranslationY() + 1500);
-                    animator.setDuration(5000);
-                    animators.add(animator);
+                animatorY.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(@NonNull Animator animator) {}
 
-                    animatorSet.playTogether(animators);
-                    animatorSet.start();
-                }
+                    @Override
+                    public void onAnimationEnd(@NonNull Animator animator) {
+                        if(numberBoxesSoFar == 3){
+                            //Here we need to scroll
+                            AnimatorSet animatorSet = new AnimatorSet();
+                            List<Animator> animators = new ArrayList<>();
+
+                            // Get the screen height
+                            int screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+                            // Get the height of the ImageView
+                            int imageViewHeight = hotelMiddleIV.getHeight();
+                            float targetYPosition = screenHeight - imageViewHeight;
+
+
+                            //We want them all to move the same distance
+                            float heightForScroll =  hotelFloorIV.getY() - 108;
+                            Log.d("COMP3018", "hotel Floor "+ hotelFloorIV.getY());
+
+
+                            for(ImageView imageView : middleImageViews){
+                                ObjectAnimator animator1 = ObjectAnimator.ofFloat(imageView, "translationY", 0f, endingLocationY);
+                                animator1.setDuration(5000);
+                                animators.add(animator1);
+
+                                Log.d("COMP3018","boc height: "+ boxHeightInPx);
+                            }
+
+
+                            ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", endingLocationY);
+                            animator1.setDuration(5000);
+                            animators.add(animator1);
+
+                            animatorSet.playTogether(animators);
+                            animatorSet.start();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(@NonNull Animator animator) {}
+
+                    @Override
+                    public void onAnimationRepeat(@NonNull Animator animator) {}
+                });
 
                 //Moves it to the right location
-
                 addNewHotelLayerButton.setEnabled(true);
                 placeHotelLayerButton.setEnabled(false);
 
