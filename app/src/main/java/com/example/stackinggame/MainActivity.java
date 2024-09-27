@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
                                 newEndingLocation -= boxHeightInPx;
 
                                 for(ImageView imageView : middleImageViews){
+                                    Log.d("COMP3018","This is the location of them "+ imageView.getY());
+                                    Log.d("COMP3018","Freddie checking new ending location "+ newEndingLocation);
                                     //We go from the first image at the bottom
                                     animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
                                     animator1.setDuration(5000);
@@ -183,9 +185,10 @@ public class MainActivity extends AppCompatActivity {
                                 });
 
                             }else{
-                                float newEndingLocation = endingLocationY + (boxHeightInPx*5);
+                                float newEndingLocation = endingLocationY + (boxHeightInPx*6);
                                 ObjectAnimator animator1;
                                 for(ImageView imageView : middleImageViews){
+                                    Log.d("COMP3018","This is the location of them "+ imageView.getY());
                                     Log.d("COMP3018","Freddie checking new ending location "+ newEndingLocation);
                                     //We go from the first image at the bottom
                                     animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
@@ -213,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                         middleImageViews.clear();
-                                        middleImageViews.add(0, lastElement);
+                                        middleImageViews.add(lastElement);
                                     }
 
                                     @Override
@@ -263,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
 
         hotelMiddleIV.setLayoutParams(layoutParams);
         constraintLayout.addView(hotelMiddleIV);
-        Log.d("COMP3018", "This is current number of box and it is -1 as well: "+ currentNumberOfBoxes);
-        middleImageViews.add(currentNumberOfBoxes-1, hotelMiddleIV);
+        middleImageViews.add(hotelMiddleIV);
+
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
