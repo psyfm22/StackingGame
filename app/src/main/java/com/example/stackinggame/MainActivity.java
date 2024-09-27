@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ObjectAnimator animatorX, animatorY;
     private int hotelCountStackingActivity;
+    private int currentNumberOfBoxes =0;
     private final int yAxisTime = 2000;
     private float startingLocationX, endingLocationX, endingLocationY, boxWidthInPx,
             boxHeightInPx, upperConstraint;
@@ -40,10 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView scoreTV;
     private ConstraintLayout constraintLayout;
     private ImageView hotelMiddleIV, hotelFloorIV, backgroundIV;
-
-
-    //We divide number of pixels by 24
-
+    private boolean doingFirstPass = true;
     /**
      * Length is 600 and Height is 216
      * Divided Length is 25 and Height is 9
@@ -60,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
-        hotelCountStackingActivity = sharedPreferences.getInt("hotelCountStackingActivity", 0);
 
         boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics());
         boxHeightInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 216, getResources().getDisplayMetrics());
@@ -117,10 +112,11 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     lastBlockLeftX = leftX;
                     lastBlockRightX = rightX;
-                    float extraMinus = hotelCountStackingActivity * boxHeightInPx;
+                    float extraMinus = currentNumberOfBoxes * boxHeightInPx;
                     endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - extraMinus;
                     animatorY = ObjectAnimator.ofFloat(hotelMiddleIV, "translationY", 0f, endingLocationY);
-                    animatorY.setDuration(yAxisTime /hotelCountStackingActivity);
+                    animatorY.setDuration(yAxisTime /currentNumberOfBoxes);
+                    Log.d("COMP3018", "Current number of boxes: "+ currentNumberOfBoxes);
                     animatorY.start();
                     scoreTV.setText(""+hotelCountStackingActivity);
                 }
@@ -131,46 +127,103 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(@NonNull Animator animator) {
-
                         //Moves it to the right location
                         addNewHotelLayerButton.setEnabled(true);
                         placeHotelLayerButton.setEnabled(false);
-                        if(numberBoxesSoFar == 3){
-                            //Here we need to scroll
+                        if(currentNumberOfBoxes ==3){
+
                             AnimatorSet animatorSet = new AnimatorSet();
                             List<Animator> animators = new ArrayList<>();
 
-                            // Get the screen height
-                            int screenHeight = getResources().getDisplayMetrics().heightPixels;
-
-                            // Get the height of the ImageView
-                            int imageViewHeight = hotelMiddleIV.getHeight();
-                            float targetYPosition = screenHeight - imageViewHeight;
-
-
-                            //We want them all to move the same distance
-                            float heightForScroll =  hotelFloorIV.getY() - 108;
-                            Log.d("COMP3018", "hotel Floor "+ hotelFloorIV.getY());
-
-                            float newEndingLocation = endingLocationY + (boxHeightInPx*3);
-
-                            for(ImageView imageView : middleImageViews){
-                                ObjectAnimator animator1 = ObjectAnimator.ofFloat(imageView, "translationY", endingLocationY, newEndingLocation);
+                            if(doingFirstPass){
+                                doingFirstPass = false;
+                                float newEndingLocation = endingLocationY + (boxHeightInPx*6);
+                                float holder = (float) (boxHeightInPx*3.2);
+                                ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", newEndingLocation-holder);
                                 animator1.setDuration(5000);
                                 animators.add(animator1);
+                                newEndingLocation -= boxHeightInPx;
 
-                                endingLocationY += boxHeightInPx;
-                                newEndingLocation += boxHeightInPx;
-                                Log.d("COMP3018","boc height: "+ boxHeightInPx);
+                                for(ImageView imageView : middleImageViews){
+                                    //We go from the first image at the bottom
+                                    animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
+                                    animator1.setDuration(5000);
+                                    animators.add(animator1);
+
+                                    newEndingLocation -= boxHeightInPx;
+                                }
+
+                                animatorSet.playTogether(animators);
+                                animatorSet.start();
+                                animatorSet.addListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(@NonNull Animator animator) {}
+
+                                    @Override
+                                    public void onAnimationEnd(@NonNull Animator animator) {
+                                        Log.d("COMP3018","Animation set ended");
+
+                                        ImageView lastElement = middleImageViews.get(middleImageViews.size() - 1);
+
+                                        int numberOfIVs = middleImageViews.size();
+                                        for(int i=0 ; i<numberOfIVs;i++){
+                                            if(i!=numberOfIVs-1){
+                                                constraintLayout.removeView(middleImageViews.get(i));
+                                            }
+                                        }
+                                        middleImageViews.clear();
+                                        middleImageViews.add(0, lastElement);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(@NonNull Animator animator) {}
+
+                                    @Override
+                                    public void onAnimationRepeat(@NonNull Animator animator) {}
+                                });
+
+                            }else{
+                                float newEndingLocation = endingLocationY + (boxHeightInPx*5);
+                                ObjectAnimator animator1;
+                                for(ImageView imageView : middleImageViews){
+                                    Log.d("COMP3018","Freddie checking new ending location "+ newEndingLocation);
+                                    //We go from the first image at the bottom
+                                    animator1 = ObjectAnimator.ofFloat(imageView, "translationY", newEndingLocation);
+                                    animator1.setDuration(5000);
+                                    animators.add(animator1);
+
+                                    newEndingLocation -= boxHeightInPx;
+                                }
+                                animatorSet.playTogether(animators);
+                                animatorSet.start();
+                                animatorSet.addListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(@NonNull Animator animator) {}
+
+                                    @Override
+                                    public void onAnimationEnd(@NonNull Animator animator) {
+                                        Log.d("COMP3018","Animation set ended");
+
+                                        ImageView lastElement = middleImageViews.get(middleImageViews.size() - 1);
+
+                                        int numberOfIVs = middleImageViews.size();
+                                        for(int i=0 ; i<numberOfIVs;i++){
+                                            if(i!=numberOfIVs-1){
+                                                constraintLayout.removeView(middleImageViews.get(i));
+                                            }
+                                        }
+                                        middleImageViews.clear();
+                                        middleImageViews.add(0, lastElement);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(@NonNull Animator animator) {}
+
+                                    @Override
+                                    public void onAnimationRepeat(@NonNull Animator animator) {}
+                                });
                             }
-
-
-                            ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", newEndingLocation);
-                            animator1.setDuration(5000);
-                            animators.add(animator1);
-
-                            animatorSet.playTogether(animators);
-                            animatorSet.start();
+                            currentNumberOfBoxes =0;
                         }
                     }
 
@@ -186,8 +239,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+
+
+
+
+
+
     private void addNewImage(){
         hotelCountStackingActivity++;
+        currentNumberOfBoxes++;
+
         hotelMiddleIV = new ImageView(this);
 
         hotelMiddleIV.setId(View.generateViewId());
@@ -200,7 +263,8 @@ public class MainActivity extends AppCompatActivity {
 
         hotelMiddleIV.setLayoutParams(layoutParams);
         constraintLayout.addView(hotelMiddleIV);
-        middleImageViews.add(hotelCountStackingActivity-1, hotelMiddleIV);
+        Log.d("COMP3018", "This is current number of box and it is -1 as well: "+ currentNumberOfBoxes);
+        middleImageViews.add(currentNumberOfBoxes-1, hotelMiddleIV);
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
@@ -237,6 +301,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
     private void calculateNewCenterOfMass(double xInput, double yInput){
         //Calculate centre of mass, each block weighs 1kg
 
@@ -251,13 +322,15 @@ public class MainActivity extends AppCompatActivity {
         numberBoxesSoFar++;
     }
 
+
+
+
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
      */
     private void showAlertDialogue(boolean successful) {
         //Initialise the layouts and views
         View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.alert_layout, null, false);
-        ConstraintLayout alertLayout = view.findViewById(R.id.alertLayout);
         TextView alertTitle = view.findViewById(R.id.alertTitleTV);
         TextView alertDescription = view.findViewById(R.id.alertDescriptionTV);
         Button alertButton = view.findViewById(R.id.alertDoneButton);
@@ -293,6 +366,13 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+
+
+
+
+
+
+
     private void resetActivity(){
         for(int i=0 ; i<middleImageViews.size();i++){
             constraintLayout.removeView(middleImageViews.get(i));
@@ -300,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
         middleImageViews.clear(); // Clear the list
 
         hotelCountStackingActivity = 0;
+        currentNumberOfBoxes =0;
 
         centreOfMassPoint[0] = 960;
         centreOfMassPoint[1] = 916;
