@@ -25,21 +25,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ObjectAnimator animatorX;
-    private ObjectAnimator animatorY;
+    private ObjectAnimator animatorX, animatorY;
     private int hotelCountStackingActivity;
-    private ConstraintLayout constraintLayout;
-    private ImageView hotelMiddleIV;
-    private float startingLocationX, endingLocationX, endingLocationY;
     private final int yAxisTime = 2000;
+    private float startingLocationX, endingLocationX, endingLocationY, boxWidthInPx,
+            boxHeightInPx, upperConstraint;
     private double numberBoxesSoFar=0;
-    private double[] centreOfMassPoint = new double[2];
+    private final double[] centreOfMassPoint = new double[2];
     private final double startOfGroundFloor =660, endOfGroundFloor=1260;
     private double lastBlockLeftX, lastBlockRightX;
     private AlertDialog alertDialog;
-    List<ImageView> middleImageViews = new ArrayList<>();
-    private float boxWidthInPx ,boxHeightInPx ,upperConstraint;
+    private final List<ImageView> middleImageViews = new ArrayList<>();
     private TextView scoreTV;
+    private ConstraintLayout constraintLayout;
+    private ImageView hotelMiddleIV;
 
 
     //We divide number of pixels by 24
