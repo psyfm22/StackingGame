@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<ImageView> middleImageViews = new ArrayList<>();
     private TextView scoreTV;
     private ConstraintLayout constraintLayout;
-    private ImageView hotelMiddleIV, hotelFloorIV, grassBackgroundIV, skyBackgroundIV;
+    private ImageView hotelMiddleIV, hotelFloorIV, grassBackgroundIV, skyBackgroundIV, skyBackground2IV;
     private boolean doingFirstPass = true;
     /**
      * Length is 600 and Height is 216
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         grassBackgroundIV = findViewById(R.id.grassBackgroundIV);
         skyBackgroundIV = findViewById(R.id.skyBackgroundIV);
+        skyBackground2IV = findViewById(R.id.skyBackground2IV);
 
         placeHotelLayerButton.setEnabled(false);
         //First rectangle
@@ -140,8 +141,6 @@ public class MainActivity extends AppCompatActivity {
                             float newEndingLocation = endingLocationY + (boxHeightInPx*6);
 
                             if(doingFirstPass){
-                                doingFirstPass = false;
-
                                 float holder = (float) (boxHeightInPx*3.2);
                                 ObjectAnimator animator1 = ObjectAnimator.ofFloat(hotelFloorIV, "translationY", newEndingLocation-holder);
                                 animator1.setDuration(5000);
@@ -161,12 +160,25 @@ public class MainActivity extends AppCompatActivity {
                                 newEndingLocation -= boxHeightInPx;
                             }
 
-                            ObjectAnimator slideDownSkyBackground = ObjectAnimator.ofFloat(skyBackgroundIV, "translationY", -1080f, 0f);
-                            slideDownSkyBackground.setDuration(5000);
-                            animators.add(slideDownSkyBackground);
-                            ObjectAnimator slideDownGrassBackground = ObjectAnimator.ofFloat(grassBackgroundIV, "translationY", 0f, 1080f);
-                            slideDownGrassBackground.setDuration(5000);
-                            animators.add(slideDownGrassBackground);
+                            Log.d("COMP3018","Doing the first pass: "+ doingFirstPass);
+
+                            if(doingFirstPass){
+                                ObjectAnimator slideDownSkyBackground = ObjectAnimator.ofFloat(skyBackgroundIV, "translationY", -1080f, 0f);
+                                slideDownSkyBackground.setDuration(5000);
+                                animators.add(slideDownSkyBackground);
+                                ObjectAnimator slideDownGrassBackground = ObjectAnimator.ofFloat(grassBackgroundIV, "translationY", 0f, 1080f);
+                                slideDownGrassBackground.setDuration(5000);
+                                animators.add(slideDownGrassBackground);
+                                doingFirstPass = false;
+                            }else{
+                                ObjectAnimator slideDownSkyBackground = ObjectAnimator.ofFloat(skyBackground2IV, "translationY", -1080f, 0f);
+                                slideDownSkyBackground.setDuration(5000);
+                                animators.add(slideDownSkyBackground);
+                                ObjectAnimator slideDownGrassBackground = ObjectAnimator.ofFloat(skyBackgroundIV, "translationY", 0f, 1080f);
+                                slideDownGrassBackground.setDuration(5000);
+                                animators.add(slideDownGrassBackground);
+
+                            }
 
                             animatorSet.playTogether(animators);
                             animatorSet.start();
@@ -192,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                                     middleImageViews.add(0, lastElement);
                                     if(doingFirstPass){
                                         constraintLayout.removeView(hotelFloorIV);
-                                        grassBackgroundIV.setImageResource(R.drawable.sky_background);
                                     }
                                 }
 
@@ -217,10 +228,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 
 
 
