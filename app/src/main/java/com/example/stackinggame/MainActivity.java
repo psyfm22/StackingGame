@@ -3,7 +3,6 @@ package com.example.stackinggame;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
@@ -49,11 +48,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Length is 600 and Height is 216
      * Divided Length is 25 and Height is 9
-     *
      * 960 is the center of start block
      * 660 is the start and
      * 1260 is the end
-     *
      * So if the center of mass falls within this then it will stay
      */
 
@@ -64,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         soundPool = new SoundPool.Builder()
-                .setMaxStreams(5) // Five simulataneous sounds
+                .setMaxStreams(5) // Five simultaneous sounds
                 .build();
 
         soundEffect = soundPool.load(MainActivity.this, R.raw.coin, 1);
 
         mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
         mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(0.01f, 0.01f);// We set it to half on both the left and right channel
         mediaPlayer.start();
 
 
@@ -122,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
                 calculateNewCenterOfMass(hotelMiddleIV.getX(), hotelMiddleIV.getY());
 
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
-                    showAlertDialogue(false);
+                    showAlertDialogue();
                     resetActivity();
                 } else if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
-                    showAlertDialogue(false);
+                    showAlertDialogue();
                     resetActivity();
                 }else{
                     lastBlockLeftX = leftX;
@@ -333,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
      */
-    private void showAlertDialogue(boolean successful) {
+    private void showAlertDialogue() {
         //Initialise the layouts and views
         View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.alert_layout, null, false);
         TextView alertTitle = view.findViewById(R.id.alertTitleTV);
@@ -341,17 +339,10 @@ public class MainActivity extends AppCompatActivity {
         Button alertButton = view.findViewById(R.id.alertDoneButton);
         ImageView alertLogo = view.findViewById(R.id.alertLogoIV);
 
-        if (successful) {
-            alertTitle.setText(R.string.success_title_alert);
-            alertDescription.setText(R.string.emotion_added_text_alert);
-            alertLogo.setImageResource(R.drawable.success);
-            alertButton.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
-        } else {
-            alertTitle.setText(R.string.game_over_title_alert);
-            alertDescription.setText(R.string.game_over_text_alert);
-            alertLogo.setImageResource(R.drawable.error);
-            alertButton.setBackgroundColor(ContextCompat.getColor(this, R.color.red_alert));
-        }
+        alertTitle.setText(R.string.game_over_title_alert);
+        alertDescription.setText(R.string.game_over_text_alert);
+        alertLogo.setImageResource(R.drawable.error);
+        alertButton.setBackgroundColor(ContextCompat.getColor(this, R.color.red_alert));
 
         //Initialise the builder and the alertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -359,9 +350,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog = builder.create();
 
         //Set the button dismiss
-        alertButton.setOnClickListener(view1 -> {
-            alertDialog.dismiss();
-        });
+        alertButton.setOnClickListener(view1 -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
