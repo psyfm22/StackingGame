@@ -304,30 +304,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
-    private void calculateNewCenterOfMass(double xInput, double yInput){
-        //Calculate centre of mass, each block weighs 1kg
-
-        double[] newCOM = new double[2];//x and y
-        newCOM[0] = xInput + 300;
-        newCOM[1] = yInput - 108;
-        //We do this as this works out the centre of the block
-
-        centreOfMassPoint[0] = ((numberBoxesSoFar * centreOfMassPoint[0]) + newCOM[0])/(numberBoxesSoFar+1);
-        centreOfMassPoint[1] = ((numberBoxesSoFar * centreOfMassPoint[1]) + newCOM[1])/(numberBoxesSoFar+1);
-
-        numberBoxesSoFar++;
-    }
-
-
-
-
     /**
      * showAlertDialogue, Shows the success of adding the alert dialogue
      */
