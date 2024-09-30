@@ -29,8 +29,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ObjectAnimator animatorX, animatorY;
-    private int hotelCountStackingActivity;
-    private int currentNumberOfBoxes =0;
+    private int hotelCountStackingActivity, soundEffect, currentNumberOfBoxes =0;
     private final int yAxisTime = 2000;
     private float startingLocationX, endingLocationX, endingLocationY, boxWidthInPx,
             boxHeightInPx, upperConstraint;
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView hotelMiddleIV, hotelFloorIV, grassBackgroundIV, skyBackgroundIV, skyBackground2IV;
     private boolean doingFirstPass = true;
     private SoundPool soundPool;
-    private int soundEffect;
     private MediaPlayer mediaPlayer;
 
     /**
