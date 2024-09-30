@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean doingFirstPass = true;
     private SoundPool soundPool;
     private int soundEffect;
-
+    private MediaPlayer mediaPlayer;
 
     /**
      * Length is 600 and Height is 216
@@ -69,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         soundEffect = soundPool.load(MainActivity.this, R.raw.coin, 1);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
 
 
         boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics());
@@ -399,5 +404,18 @@ public class MainActivity extends AppCompatActivity {
         endingLocationY = getResources().getDisplayMetrics().heightPixels - upperConstraint - boxHeightInPx - boxHeightInPx;
 
         scoreTV.setText("0");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        if(soundPool!= null){
+            soundPool.release();
+            soundPool = null;
+        }
     }
 }
