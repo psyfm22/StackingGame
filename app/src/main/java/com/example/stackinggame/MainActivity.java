@@ -296,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
         Rect clipRect = new Rect((int) (0+differenceLeft), 0, (int) (600-differenceRight), 216);
         hotelMiddleIV.setClipBounds(clipRect);
 
-        cropImage(hotelMiddleIV);
 
         animatorX = ObjectAnimator.ofFloat(hotelMiddleIV, "translationX", startingLocationX, endingLocationX);
         animatorX.setDuration(3000);
@@ -323,30 +322,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationRepeat(@NonNull Animator animation) {}
         });
-    }
-
-    private void cropImage(ImageView imageView) {
-        // Retrieve the original drawable of the ImageView
-        Drawable drawable = imageView.getDrawable();
-        if (drawable != null) {
-            Log.d("COMP3018", "In drawable");
-
-            Rect originalBounds = drawable.getBounds();
-
-                Log.d("COMP3018","left: "+originalBounds.left );
-                Log.d("COMP3018","right: "+originalBounds.right );
-                Log.d("COMP3018","top: "+originalBounds.top );
-                Log.d("COMP3018","bottom: "+originalBounds.bottom );
-
-
-            // Calculate the new bounds after cropping
-            Rect croppedBounds = new Rect(originalBounds);
-            croppedBounds.left += cropAmount*3;  // Crop 100 pixels from the left
-
-            // Set the new bounds to the drawable
-            drawable.setBounds(croppedBounds);
-            imageView.setImageDrawable(drawable);  // Update the ImageView with the new drawable
-        }
     }
 
 
