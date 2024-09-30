@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -42,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout constraintLayout;
     private ImageView hotelMiddleIV, hotelFloorIV, grassBackgroundIV, skyBackgroundIV, skyBackground2IV;
     private boolean doingFirstPass = true;
+    private SoundPool soundPool;
+    private int soundEffect;
+
+
     /**
      * Length is 600 and Height is 216
      * Divided Length is 25 and Height is 9
@@ -58,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        soundPool = new SoundPool.Builder()
+                .setMaxStreams(5) // Five simulataneous sounds
+                .build();
+
+        soundEffect = soundPool.load(MainActivity.this, R.raw.coin, 1);
+
 
         boxWidthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics());
         boxHeightInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 216, getResources().getDisplayMetrics());
@@ -130,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(@NonNull Animator animator) {
+
+                        playSound();
+
+
                         //Moves it to the right location
                         addNewHotelLayerButton.setEnabled(true);
                         placeHotelLayerButton.setEnabled(false);
@@ -354,6 +370,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    private void playSound() {
+        soundPool.play(soundEffect, 1.0f, 1.0f, 1, 0, 1.0f);
+    }
 
 
 
