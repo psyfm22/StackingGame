@@ -3,7 +3,9 @@ package com.example.stackinggame;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -32,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private final int yAxisTime = 2000;
     private float startingLocationX, endingLocationX, endingLocationY, boxWidthInPx,
             boxHeightInPx, upperConstraint;
-    private double numberBoxesSoFar=0;
-    private final double[] centreOfMassPoint = new double[2];
+    private double numberBoxesSoFar=0, differenceLeft, differenceRight;
     private final double startOfGroundFloor =660, endOfGroundFloor=1260;
     private double lastBlockLeftX, lastBlockRightX;
     private AlertDialog alertDialog;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean doingFirstPass = true;
     private SoundPool soundPool;
     private MediaPlayer mediaPlayer;
+    private int cropAmount = 100;  // Amount of pixels to crop (for example)
+
+
 
     /**
      * Length is 600 and Height is 216
@@ -97,10 +101,11 @@ public class MainActivity extends AppCompatActivity {
         Center of gravity for first block is 960, 108, it just the central point
         The actual pixel would be (960,916)
          */
-        centreOfMassPoint[0] = 960;
-        centreOfMassPoint[1] = 916;
         lastBlockLeftX = 660;
         lastBlockRightX = 1260;
+
+        differenceLeft = 0;
+        differenceRight =0;
 
 
         addNewHotelLayerButton.setOnClickListener(view -> {
@@ -109,20 +114,37 @@ public class MainActivity extends AppCompatActivity {
             placeHotelLayerButton.setEnabled(true);
         });
 
+
+
         placeHotelLayerButton.setOnClickListener(view -> {
             placeHotelLayerButton.setEnabled(false);
             if(animatorX!=null){
                 animatorX.pause();
 
-                double leftX = hotelMiddleIV.getX();
+                double leftX = Math.round(hotelMiddleIV.getX());
                 double rightX = leftX + 600;
 
-                calculateNewCenterOfMass(hotelMiddleIV.getX(), hotelMiddleIV.getY());
+                Log.d("COMP3018", "left is "+leftX);
+                Log.d("COMP3018", "right is "+ rightX );
+                Log.d("COMP3018", "last left is "+lastBlockLeftX);
+                Log.d("COMP3018", "last right is "+ lastBlockRightX );
+
+                //Find the overhang
+                differenceLeft =  lastBlockLeftX - leftX;
+                differenceRight = rightX - lastBlockRightX;
+
+                Log.d("COMP3018", "left difference is "+differenceLeft);
+                Log.d("COMP3018", "right difference is "+ differenceRight );
+
+
+                if(differenceLeft <0){
+                    differenceLeft = 0;
+                }
+                if(differenceRight <0){
+                    differenceRight =0;
+                }
 
                 if(rightX<lastBlockLeftX || leftX>lastBlockRightX){
-                    showAlertDialogue();
-                    resetActivity();
-                } else if (centreOfMassPoint[0] < startOfGroundFloor || centreOfMassPoint[0] > endOfGroundFloor) {
                     showAlertDialogue();
                     resetActivity();
                 }else{
@@ -140,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 animatorY.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(@NonNull Animator animator) {}
-
                     @Override
                     public void onAnimationEnd(@NonNull Animator animator) {
 
@@ -150,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         //Moves it to the right location
                         addNewHotelLayerButton.setEnabled(true);
                         placeHotelLayerButton.setEnabled(false);
+
                         if(currentNumberOfBoxes ==3){
 
                             AnimatorSet animatorSet = new AnimatorSet();
@@ -177,8 +199,6 @@ public class MainActivity extends AppCompatActivity {
                                 newEndingLocation -= boxHeightInPx;
                             }
 
-                            Log.d("COMP3018","Doing the first pass: "+ doingFirstPass);
-
                             if(doingFirstPass){
                                 ObjectAnimator slideDownSkyBackground = ObjectAnimator.ofFloat(skyBackgroundIV, "translationY", -1080f, 0f);
                                 slideDownSkyBackground.setDuration(5000);
@@ -194,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
                                 ObjectAnimator slideDownGrassBackground = ObjectAnimator.ofFloat(skyBackgroundIV, "translationY", 0f, 1080f);
                                 slideDownGrassBackground.setDuration(5000);
                                 animators.add(slideDownGrassBackground);
-
                             }
 
                             animatorSet.playTogether(animators);
@@ -226,19 +245,14 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onAnimationCancel(@NonNull Animator animator) {}
-
                                 @Override
                                 public void onAnimationRepeat(@NonNull Animator animator) {}
                             });
-
-
                             currentNumberOfBoxes =0;
                         }
                     }
-
                     @Override
                     public void onAnimationCancel(@NonNull Animator animator) {}
-
                     @Override
                     public void onAnimationRepeat(@NonNull Animator animator) {}
                 });
@@ -256,8 +270,10 @@ public class MainActivity extends AppCompatActivity {
 
         hotelMiddleIV = new ImageView(this);
 
+
         hotelMiddleIV.setId(View.generateViewId());
         hotelMiddleIV.setImageResource(R.drawable.apartment_window);
+
 
         ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics()),
@@ -277,13 +293,19 @@ public class MainActivity extends AppCompatActivity {
 
         constraintSet.applyTo(constraintLayout);
 
+        Rect clipRect = new Rect((int) (0+differenceLeft), 0, (int) (600-differenceRight), 216);
+        hotelMiddleIV.setClipBounds(clipRect);
+
+        cropImage(hotelMiddleIV);
+
         animatorX = ObjectAnimator.ofFloat(hotelMiddleIV, "translationX", startingLocationX, endingLocationX);
         animatorX.setDuration(3000);
         animatorX.start();
 
         animatorX.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(@NonNull Animator animation) {}
+            public void onAnimationStart(@NonNull Animator animation) {
+            }
 
             @Override
             public void onAnimationEnd(@NonNull Animator animation) {
@@ -302,6 +324,31 @@ public class MainActivity extends AppCompatActivity {
             public void onAnimationRepeat(@NonNull Animator animation) {}
         });
     }
+
+    private void cropImage(ImageView imageView) {
+        // Retrieve the original drawable of the ImageView
+        Drawable drawable = imageView.getDrawable();
+        if (drawable != null) {
+            Log.d("COMP3018", "In drawable");
+
+            Rect originalBounds = drawable.getBounds();
+
+                Log.d("COMP3018","left: "+originalBounds.left );
+                Log.d("COMP3018","right: "+originalBounds.right );
+                Log.d("COMP3018","top: "+originalBounds.top );
+                Log.d("COMP3018","bottom: "+originalBounds.bottom );
+
+
+            // Calculate the new bounds after cropping
+            Rect croppedBounds = new Rect(originalBounds);
+            croppedBounds.left += cropAmount*3;  // Crop 100 pixels from the left
+
+            // Set the new bounds to the drawable
+            drawable.setBounds(croppedBounds);
+            imageView.setImageDrawable(drawable);  // Update the ImageView with the new drawable
+        }
+    }
+
 
 
     /**
@@ -355,8 +402,6 @@ public class MainActivity extends AppCompatActivity {
         hotelCountStackingActivity = 0;
         currentNumberOfBoxes =0;
 
-        centreOfMassPoint[0] = 960;
-        centreOfMassPoint[1] = 916;
         lastBlockLeftX = 660;
         lastBlockRightX = 1260;
 
